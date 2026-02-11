@@ -125,7 +125,7 @@ func _on_join_b_pressed():
 	print("Connecting to ", ip)
 
 func _on_connected():
-	print("Connected to server!")
+	$VBoxContainer2/yIPLabel.text = "Connected to server!"
 
 func _on_peer_connected(id):
-	print("Peer connected: ", id)
+	$VBoxContainer2/yIPLabel.text = "Peer connected: " + str(id)
