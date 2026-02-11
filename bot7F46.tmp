@@ -1,0 +1,54 @@
+[gd_scene load_steps=8 format=3 uid="uid://b4pn8kf4da1ac"]
+
+[ext_resource type="Texture2D" uid="uid://dosuaffesengn" path="res://pics/Bot1.png" id="1_3tvf7"]
+[ext_resource type="Script" path="res://bot_1.gd" id="1_su4po"]
+[ext_resource type="Texture2D" uid="uid://dvyuqr7k5ufia" path="res://pics/Bot2.png" id="2_vhyuu"]
+[ext_resource type="Texture2D" uid="uid://btxj263o6244j" path="res://pics/Bot3.png" id="3_csvf6"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_y0qfv"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_3tvf7")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_vhyuu")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_csvf6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_vhyuu")
+}],
+"loop": true,
+"name": &"bot1",
+"speed": 5.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_87lvn"]
+radius = 80.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_lydp7"]
+radius = 368.348
+
+[node name="Bot1" type="CharacterBody2D"]
+position = Vector2(280, 440)
+script = ExtResource("1_su4po")
+metadata/_edit_group_ = true
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_y0qfv")
+animation = &"bot1"
+frame = 2
+frame_progress = 0.701652
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(40, 0)
+shape = SubResource("CircleShape2D_87lvn")
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(512, -8)
+shape = SubResource("CircleShape2D_lydp7")
+debug_color = Color(0.771064, 0.344065, 0.719909, 0.42)

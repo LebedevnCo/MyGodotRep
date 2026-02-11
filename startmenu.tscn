@@ -1,0 +1,130 @@
+[gd_scene format=3 uid="uid://diybkbfhf3d77"]
+
+[ext_resource type="Script" uid="uid://bjww5okjvkymi" path="res://startmenu.gd" id="1_ynf42"]
+[ext_resource type="Texture2D" uid="uid://qqojsl83tq3h" path="res://AlexGames3.png" id="2_kj28g"]
+
+[node name="Control" type="Control" unique_id=903711567]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ynf42")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=936618427]
+layout_mode = 1
+anchors_preset = 13
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -280.0
+offset_top = -360.0
+offset_right = -118.0
+offset_bottom = -360.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(2, 2)
+alignment = 1
+
+[node name="Label" type="Label" parent="VBoxContainer" unique_id=393447590]
+layout_mode = 2
+text = "This is our first game
+"
+
+[node name="StartB" type="Button" parent="VBoxContainer" unique_id=11688995]
+layout_mode = 2
+text = "Start"
+
+[node name="ShapeLabel" type="RichTextLabel" parent="VBoxContainer" unique_id=27566804]
+layout_mode = 2
+bbcode_enabled = true
+text = "battlefield shape: 
+[color=yellow]▭[/color] "
+fit_content = true
+horizontal_alignment = 1
+
+[node name="ShapeSlider" type="HSlider" parent="VBoxContainer" unique_id=1877745894]
+layout_mode = 2
+min_value = 1.0
+max_value = 3.0
+value = 1.0
+tick_count = 3
+ticks_on_borders = true
+
+[node name="DiffLabel" type="Label" parent="VBoxContainer" unique_id=987099416]
+layout_mode = 2
+text = "Difficulty: 1"
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="DiffSlider" type="HSlider" parent="VBoxContainer" unique_id=792244268]
+layout_mode = 2
+size_flags_vertical = 1
+min_value = 1.0
+max_value = 5.0
+value = 1.0
+tick_count = 5
+ticks_on_borders = true
+
+[node name="ExitB" type="Button" parent="VBoxContainer" unique_id=885854492]
+layout_mode = 2
+text = "Exit"
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="." unique_id=1208528662]
+layout_mode = 1
+anchors_preset = 13
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = 152.0
+offset_top = -360.0
+offset_right = 314.0
+offset_bottom = -360.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(2, 2)
+alignment = 1
+
+[node name="MLabel" type="Label" parent="VBoxContainer2" unique_id=1504281786]
+layout_mode = 2
+text = "For 2 players or more
+"
+
+[node name="yIPLabel" type="Label" parent="VBoxContainer2" unique_id=147806306]
+layout_mode = 2
+text = "Your IP: "
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="HostB" type="Button" parent="VBoxContainer2" unique_id=463601140]
+layout_mode = 2
+text = "Host"
+
+[node name="LineEdit" type="LineEdit" parent="VBoxContainer2" unique_id=2146352458]
+layout_mode = 2
+text = "XXX.XXX.XXX.XXX"
+alignment = 1
+
+[node name="JoinB" type="Button" parent="VBoxContainer2" unique_id=2045183206]
+layout_mode = 2
+text = "Join"
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=1763042424]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_kj28g")
+expand_mode = 1
+stretch_mode = 5
+
+[connection signal="pressed" from="VBoxContainer/StartB" to="." method="_on_start_b_pressed"]
+[connection signal="drag_ended" from="VBoxContainer/ShapeSlider" to="." method="_on_shape_slider_drag_ended"]
+[connection signal="drag_ended" from="VBoxContainer/DiffSlider" to="." method="_on_diff_slider_drag_ended"]
+[connection signal="pressed" from="VBoxContainer/ExitB" to="." method="_on_exit_b_pressed"]
+[connection signal="pressed" from="VBoxContainer2/HostB" to="." method="_on_host_b_pressed"]
+[connection signal="pressed" from="VBoxContainer2/JoinB" to="." method="_on_join_b_pressed"]

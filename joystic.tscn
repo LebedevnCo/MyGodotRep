@@ -1,0 +1,24 @@
+[gd_scene load_steps=3 format=3 uid="uid://xbe7571o5e57"]
+
+[ext_resource type="Texture2D" uid="uid://ceh3gfoy67cxc" path="res://icon.svg" id="1_nu7ln"]
+[ext_resource type="Script" uid="uid://1msw1cqmamlc" path="res://scripts/touch_screen_joystick.gd" id="2_kr55m"]
+
+[node name="Node2D" type="Node2D"]
+
+[node name="CharacterBody2D" type="CharacterBody2D" parent="."]
+
+[node name="Icon" type="Sprite2D" parent="CharacterBody2D"]
+position = Vector2(112, 208)
+texture = ExtResource("1_nu7ln")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="TouchScreenJoystick" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 384.0
+offset_top = 120.0
+offset_right = 424.0
+offset_bottom = 160.0
+pivot_offset = Vector2(20, 20)
+script = ExtResource("2_kr55m")

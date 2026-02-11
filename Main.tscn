@@ -1,0 +1,418 @@
+[gd_scene format=3 uid="uid://carmx4jd7djk"]
+
+[ext_resource type="Script" uid="uid://cf4xaacrb4rqp" path="res://1main.gd" id="1_glv2v"]
+[ext_resource type="Script" uid="uid://dihufupr2al5i" path="res://V0.4 food.tres.gd" id="2_20pc6"]
+[ext_resource type="Texture2D" uid="uid://bo2x72skh8626" path="res://blueberry.png" id="3_5vvyt"]
+[ext_resource type="Texture2D" uid="uid://da3hetilt4rap" path="res://blueberry2.png" id="4_c6i3y"]
+[ext_resource type="Texture2D" uid="uid://c2teaem2r0ks3" path="res://blueberry3.png" id="5_c2ibq"]
+[ext_resource type="Texture2D" uid="uid://xcik4np4q0wp" path="res://Alex1.PNG" id="6_j4qnp"]
+[ext_resource type="Texture2D" uid="uid://usw45lifaxwc" path="res://Alex2.png" id="7_fpfj3"]
+[ext_resource type="Texture2D" uid="uid://dry55q711utak" path="res://Alex3.PNG" id="8_sc1dx"]
+[ext_resource type="Script" uid="uid://bt0yejbkrj6m0" path="res://canvas_layer.gd" id="9_kjvhd"]
+[ext_resource type="PackedScene" uid="uid://dmr0fcamx7t56" path="res://addons/virtual_joystick/virtual_joystick_scene.tscn" id="10_5tuhn"]
+[ext_resource type="Script" uid="uid://dlrfumt8pw1w1" path="res://WinScreen.gd" id="11_2gh4u"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_devvj"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_3b0ty"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_5vvyt")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_c6i3y")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_c2ibq")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_c6i3y")
+}],
+"loop": true,
+"name": &"blue",
+"speed": 5.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_bg4s2"]
+radius = 8.0
+
+[sub_resource type="GDScript" id="GDScript_hhcpw"]
+script/source = "extends CharacterBody2D
+
+var botcount = Global.difficulty + 1
+var SPEED: float = 150.0
+var battlefield_ready: bool = false
+
+@onready var camera: Camera2D = $Camera2D
+@onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
+
+# Battlefield data
+var ground_width: float = 0.0
+var ground_height: float = 0.0
+
+func _ready():
+	add_to_group(\"Player\")
+	call_deferred(\"_find_battlefield\")
+
+	# Initial player size
+	var initial_player_size: float = 0.3
+	animated_sprite.scale = Vector2.ONE * initial_player_size
+	$\"Yamnyam-Area2D\".scale = Vector2.ONE * initial_player_size
+	$PlayerCollisionShape2D.scale = Vector2.ONE * initial_player_size
+
+	get_node(\"/root/main\").set_meta(\"player_size\", initial_player_size)
+
+# -------------------------------------------------
+# Battlefield handshake (THIS WAS THE MISSING PIECE)
+# -------------------------------------------------
+func _find_battlefield():
+	var battlefield = get_tree().get_first_node_in_group(\"battlefield\")
+	if battlefield and battlefield.has_method(\"ground_width\"):
+		set_battlefield(battlefield)
+	else:
+		push_warning(\"Battlefield not found\")
+
+func set_battlefield(battlefield):
+	print(\">>> Battlefield injected into player\")
+	ground_width = battlefield.ground_width
+	ground_height = battlefield.ground_height
+	battlefield_ready = true
+	update_camera_limits()
+
+func update_camera_limits():
+	camera.limit_left = -ground_width / 2
+	camera.limit_right = ground_width / 2
+	camera.limit_top = -ground_height / 2
+	camera.limit_bottom = ground_height / 2
+
+# -------------------------------------------------
+# Movement
+# -------------------------------------------------
+func _physics_process(delta: float) -> void:
+	var input_vector := Vector2(
+		Input.get_axis(\"ui_left\", \"ui_right\"),
+		Input.get_axis(\"ui_up\", \"ui_down\")
+	)
+
+	if input_vector.length() > 0:
+		velocity = input_vector.normalized() * SPEED
+		animated_sprite.play(\"walk\")
+		rotation = velocity.angle()
+	else:
+		velocity = Vector2.ZERO
+		animated_sprite.stop()
+
+	move_and_slide()
+
+	if battlefield_ready:
+		position.x = clamp(position.x, -ground_width / 2, ground_width / 2)
+		position.y = clamp(position.y, -ground_height / 2, ground_height / 2)
+
+	update_ui()
+
+# -------------------------------------------------
+# UI
+# -------------------------------------------------
+func update_ui():
+	var player_size: int = int(round(animated_sprite.scale.x * 100))
+	$CanvasLayer/SizeLabel.text = \"Alex (\" + str(player_size) + \")\"
+	if player_size >= 200:
+		show_win_screen()
+
+func show_win_screen():
+	$CanvasLayer/WinScreen.visible = true
+	animated_sprite.visible = false
+	get_tree().paused = true
+
+func show_lose_screen():
+	$CanvasLayer/LoseScreen.visible = true
+	animated_sprite.visible = false
+	get_tree().paused = true
+
+# -------------------------------------------------
+# Food collision
+# -------------------------------------------------
+func _on_yamnyam_area_2d_body_entered(body: Node2D) -> void:
+	if body.is_in_group(\"Food\"):
+		animated_sprite.scale *= 1.02
+		$\"Yamnyam-Area2D\".scale *= 1.02
+		$PlayerCollisionShape2D.scale *= 1.02
+
+		SPEED = min(SPEED + 2.0, 500.0)
+
+		print(
+			\"[PLAYER] EATEN | size:\",
+			int(round(animated_sprite.scale.x * 100)),
+			\"| speed:\", SPEED
+		)
+
+		body.queue_free()
+		get_node(\"/root/main/Spowner\")._on_food_eaten()
+"
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_mxvw5"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("6_j4qnp")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_fpfj3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_sc1dx")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_fpfj3")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 5.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_xrxkg"]
+radius = 240.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_sqvbp"]
+radius = 53.3333
+
+[node name="Main" type="Node2D" unique_id=1822399406]
+script = ExtResource("1_glv2v")
+
+[node name="FoodStaticBody2D2" type="StaticBody2D" parent="." unique_id=634788323 groups=["Food"]]
+position = Vector2(64, 112)
+collision_layer = 4
+collision_mask = 3
+script = ExtResource("2_20pc6")
+metadata/_edit_group_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="FoodStaticBody2D2" unique_id=1456908301]
+shape = SubResource("CircleShape2D_devvj")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="FoodStaticBody2D2" unique_id=155935881]
+scale = Vector2(0.01, 0.01)
+sprite_frames = SubResource("SpriteFrames_3b0ty")
+animation = &"blue"
+
+[node name="Food" type="StaticBody2D" parent="." unique_id=256213173 groups=["Food"]]
+position = Vector2(-32, 480)
+collision_layer = 4
+collision_mask = 3
+script = ExtResource("2_20pc6")
+metadata/_edit_group_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Food" unique_id=881451954]
+shape = SubResource("CircleShape2D_bg4s2")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Food" unique_id=1024898285]
+scale = Vector2(0.01, 0.01)
+sprite_frames = SubResource("SpriteFrames_3b0ty")
+animation = &"blue"
+
+[node name="Food2" type="StaticBody2D" parent="." unique_id=1654188559 groups=["Food"]]
+position = Vector2(344, 480)
+collision_layer = 4
+collision_mask = 3
+script = ExtResource("2_20pc6")
+metadata/_edit_group_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Food2" unique_id=338440866]
+shape = SubResource("CircleShape2D_bg4s2")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Food2" unique_id=33658354]
+scale = Vector2(0.01, 0.01)
+sprite_frames = SubResource("SpriteFrames_3b0ty")
+animation = &"blue"
+
+[node name="Food3" type="StaticBody2D" parent="." unique_id=1206870773 groups=["Food"]]
+position = Vector2(872, 224)
+collision_layer = 4
+collision_mask = 3
+script = ExtResource("2_20pc6")
+metadata/_edit_group_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Food3" unique_id=13948979]
+shape = SubResource("CircleShape2D_bg4s2")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Food3" unique_id=1429685312]
+scale = Vector2(0.01, 0.01)
+sprite_frames = SubResource("SpriteFrames_3b0ty")
+animation = &"blue"
+
+[node name="Player" type="CharacterBody2D" parent="." unique_id=900455708 groups=["Player"]]
+position = Vector2(152, 576)
+collision_mask = 10
+script = SubResource("GDScript_hhcpw")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Player" unique_id=133419585]
+scale = Vector2(0.3, 0.3)
+sprite_frames = SubResource("SpriteFrames_mxvw5")
+animation = &"walk"
+
+[node name="Yamnyam-Area2D" type="Area2D" parent="Player" unique_id=1630019106]
+scale = Vector2(0.3, 0.3)
+collision_layer = 0
+collision_mask = 6
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player/Yamnyam-Area2D" unique_id=1924002101]
+light_mask = 6
+visibility_layer = 512
+position = Vector2(26.6667, 0)
+scale = Vector2(0.3, 0.3)
+shape = SubResource("CircleShape2D_xrxkg")
+metadata/_edit_group_ = true
+
+[node name="Camera2D" type="Camera2D" parent="Player" unique_id=1959443454]
+position_smoothing_enabled = true
+
+[node name="CanvasLayer" type="CanvasLayer" parent="Player" unique_id=731298527]
+process_mode = 3
+script = ExtResource("9_kjvhd")
+
+[node name="SizeLabel" type="Label" parent="Player/CanvasLayer" unique_id=171568784]
+light_mask = 0
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 72.0
+offset_top = 8.0
+offset_right = -12.0
+offset_bottom = 31.0
+grow_horizontal = 2
+text = "Alex ()"
+horizontal_alignment = 2
+justification_flags = 0
+metadata/_edit_use_anchors_ = true
+
+[node name="SizeLabel2" type="Label" parent="Player/CanvasLayer" unique_id=578543343]
+light_mask = 0
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 72.0
+offset_top = 37.0
+offset_right = -12.0
+offset_bottom = 60.0
+grow_horizontal = 2
+horizontal_alignment = 2
+justification_flags = 0
+
+[node name="Virtual joystick left" parent="Player/CanvasLayer" unique_id=2130259377 instance=ExtResource("10_5tuhn")]
+modulate = Color(1, 1, 1, 0.156863)
+anchors_preset = -1
+anchor_top = 0.667
+anchor_right = 1.0
+offset_left = -424.0
+offset_top = 247.784
+offset_right = -416.0
+offset_bottom = 248.0
+grow_horizontal = 2
+size_flags_vertical = 8
+pressed_color = Color(0.355313, 0.355314, 0.355314, 1)
+deadzone_size = 15.0
+clampzone_size = 70.0
+joystick_mode = 2
+
+[node name="WinScreen" type="Control" parent="Player/CanvasLayer" unique_id=1682159237]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("11_2gh4u")
+
+[node name="Label" type="Label" parent="Player/CanvasLayer/WinScreen" unique_id=1200995723]
+layout_mode = 0
+offset_left = -80.0
+offset_top = -152.0
+offset_right = 69.0
+offset_bottom = -129.0
+text = "Congrats! You won!"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Button" type="Button" parent="Player/CanvasLayer/WinScreen" unique_id=1582837641]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -56.0
+offset_top = -112.0
+offset_right = 38.0
+offset_bottom = -81.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Play again?"
+
+[node name="LoseScreen" type="Control" parent="Player/CanvasLayer" unique_id=1389518162]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("11_2gh4u")
+
+[node name="Label" type="Label" parent="Player/CanvasLayer/LoseScreen" unique_id=1041879841]
+layout_mode = 0
+offset_left = -80.0
+offset_top = -152.0
+offset_right = 69.0
+offset_bottom = -129.0
+text = "How can it be? he eat you???"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Button" type="Button" parent="Player/CanvasLayer/LoseScreen" unique_id=439567559]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -56.0
+offset_top = -112.0
+offset_right = 38.0
+offset_bottom = -81.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Play again?"
+
+[node name="PauseButton" type="Button" parent="Player/CanvasLayer" unique_id=1139171009]
+offset_right = 40.0
+offset_bottom = 40.0
+focus_mode = 0
+text = "⏸️"
+
+[node name="RestartButton" type="Button" parent="Player/CanvasLayer" unique_id=484945523]
+offset_left = 40.0
+offset_right = 80.0
+offset_bottom = 40.0
+focus_mode = 0
+text = "🔄"
+
+[node name="SettingsButton" type="Button" parent="Player/CanvasLayer" unique_id=516395360]
+offset_left = 80.0
+offset_right = 120.0
+offset_bottom = 40.0
+focus_mode = 0
+text = "⚙️"
+
+[node name="PlayerCollisionShape2D" type="CollisionShape2D" parent="Player" unique_id=714685122]
+light_mask = 8
+position = Vector2(8, 0)
+scale = Vector2(0.3, 0.3)
+shape = SubResource("CircleShape2D_sqvbp")
+
+[connection signal="body_entered" from="Player/Yamnyam-Area2D" to="Player" method="_on_yamnyam_area_2d_body_entered"]
+[connection signal="pressed" from="Player/CanvasLayer/WinScreen/Button" to="Player/CanvasLayer/WinScreen" method="_on_button_pressed"]
+[connection signal="pressed" from="Player/CanvasLayer/LoseScreen/Button" to="Player/CanvasLayer/LoseScreen" method="_on_button_pressed"]
+[connection signal="pressed" from="Player/CanvasLayer/PauseButton" to="Player/CanvasLayer" method="_on_pause_button_pressed"]
+[connection signal="pressed" from="Player/CanvasLayer/RestartButton" to="Player/CanvasLayer" method="_on_restart_button_pressed"]
+[connection signal="pressed" from="Player/CanvasLayer/SettingsButton" to="Player/CanvasLayer" method="_on_settings_button_pressed"]

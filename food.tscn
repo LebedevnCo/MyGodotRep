@@ -1,0 +1,44 @@
+[gd_scene load_steps=7 format=3 uid="uid://c3p3mx4wfjulw"]
+
+[ext_resource type="Script" uid="uid://dihufupr2al5i" path="res://V0.4 food.tres.gd" id="1_70bqg"]
+[ext_resource type="Texture2D" uid="uid://bo2x72skh8626" path="res://blueberry.png" id="2_lmk4s"]
+[ext_resource type="Texture2D" uid="uid://da3hetilt4rap" path="res://blueberry2.png" id="3_nswac"]
+[ext_resource type="Texture2D" uid="uid://c2teaem2r0ks3" path="res://blueberry3.png" id="4_miilt"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_bbl3f"]
+radius = 8.0
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_itbot"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_lmk4s")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_nswac")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_miilt")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_nswac")
+}],
+"loop": true,
+"name": &"blue",
+"speed": 5.0
+}]
+
+[node name="Food" type="StaticBody2D" groups=["Food"]]
+position = Vector2(64, 40)
+collision_layer = 4
+collision_mask = 3
+script = ExtResource("1_70bqg")
+metadata/_edit_group_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_bbl3f")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+scale = Vector2(0.01, 0.01)
+sprite_frames = SubResource("SpriteFrames_itbot")
+animation = &"blue"

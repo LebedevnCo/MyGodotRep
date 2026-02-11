@@ -1,0 +1,82 @@
+[gd_scene format=3 uid="uid://lcawjkqbkarj"]
+
+[ext_resource type="Script" uid="uid://cync37ramw1tq" path="res://bot_2.gd" id="1_eqst3"]
+[ext_resource type="Texture2D" uid="uid://cxdrd4el1fnw2" path="res://pics/bot2-1.png" id="2_2qgw5"]
+[ext_resource type="Texture2D" uid="uid://dkiojf11jj23h" path="res://pics/bot2-2.png" id="3_fw70b"]
+[ext_resource type="Texture2D" uid="uid://dfpmioyw1a0dg" path="res://pics/bot2-3.png" id="4_5eyqq"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_6r580"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_2qgw5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_fw70b")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_5eyqq")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_fw70b")
+}],
+"loop": true,
+"name": &"bot2",
+"speed": 5.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ko8ln"]
+radius = 80.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_cdwbi"]
+radius = 533.333
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_2wtct"]
+radius = 53.3333
+
+[node name="bot2" type="CharacterBody2D" unique_id=1339611267 groups=["bot"]]
+position = Vector2(-40, 0)
+collision_layer = 2
+collision_mask = 8
+script = ExtResource("1_eqst3")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=385108687]
+position = Vector2(8, 0)
+scale = Vector2(0.3, 0.308)
+sprite_frames = SubResource("SpriteFrames_6r580")
+animation = &"bot2"
+
+[node name="EatArea2D" type="Area2D" parent="." unique_id=471359406]
+scale = Vector2(0.3, 0.3)
+collision_layer = 0
+collision_mask = 5
+
+[node name="EatCollisionShape2D" type="CollisionShape2D" parent="EatArea2D" unique_id=1323273278]
+light_mask = 5
+visibility_layer = 512
+position = Vector2(53.3333, 0)
+shape = SubResource("CircleShape2D_ko8ln")
+
+[node name="DetectorArea2D" type="Area2D" parent="." unique_id=436588122]
+scale = Vector2(0.3, 0.3)
+collision_layer = 0
+collision_mask = 5
+
+[node name="DetectorCollisionShape2D" type="CollisionShape2D" parent="DetectorArea2D" unique_id=1141740780]
+light_mask = 5
+visibility_layer = 512
+position = Vector2(666.667, 0)
+shape = SubResource("CircleShape2D_cdwbi")
+debug_color = Color(0.771064, 0.344065, 0.719909, 0.42)
+
+[node name="BotCollisionShape2D" type="CollisionShape2D" parent="." unique_id=278188791]
+light_mask = 2
+visibility_layer = 10
+position = Vector2(16, 0)
+scale = Vector2(0.3, 0.3)
+shape = SubResource("CircleShape2D_2wtct")
+debug_color = Color(0.160444, 0.624201, 0.462746, 0.42)
+
+[connection signal="body_entered" from="EatArea2D" to="." method="_on_eat_area_2d_body_entered"]
+[connection signal="body_entered" from="DetectorArea2D" to="." method="_on_detector_area_2d_body_entered"]
+[connection signal="body_exited" from="DetectorArea2D" to="." method="_on_detector_area_2d_body_exited"]
