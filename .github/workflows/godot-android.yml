@@ -1,0 +1,78 @@
+name: Build Godot Android APK
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    # -------------------------------------------------
+    # 1. Checkout project
+    # -------------------------------------------------
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    # -------------------------------------------------
+    # 2. Install Godot (HEADLESS)
+    # IMPORTANT: version MUST be "4.6.0"
+    # -------------------------------------------------
+    - name: Set up Godot
+      uses: chickensoft-games/setup-godot@v2
+      with:
+        version: 4.6.0
+        use-dotnet: false
+
+    # -------------------------------------------------
+    # 3. Download & install export templates
+    # -------------------------------------------------
+    - name: Install Godot export templates
+      run: |
+        set -e
+        echo "Installing export templates..."
+
+        TEMPLATE_DIR="$HOME/.local/share/godot/export_templates/4.6.stable"
+        mkdir -p "$TEMPLATE_DIR"
+
+        wget -q https://github.com/godotengine/godot/releases/download/4.6-stable/Godot_v4.6-stable_export_templates.tpz
+        unzip -o Godot_v4.6-stable_export_templates.tpz
+
+        if [ -d "templates" ]; then
+          cp -r templates/* "$TEMPLATE_DIR/"
+        elif [ -d "Godot_v4.6-stable_export_templates/templates" ]; then
+          cp -r Godot_v4.6-stable_export_templates/templates/* "$TEMPLATE_DIR/"
+        else
+          echo "❌ ERROR: templates directory not found"
+          exit 1
+        fi
+
+        echo "✅ Templates installed:"
+        ls "$TEMPLATE_DIR"
+
+    # -------------------------------------------------
+    # 4. Install Android SDK (CI only)
+    # -------------------------------------------------
+    - name: Install Android SDK
+      uses: android-actions/setup-android@v3
+
+    # -------------------------------------------------
+    # 5. EXPORT APK  🔥🔥🔥
+    # -------------------------------------------------
+    - name: Export Android APK
+      run: |
+        mkdir -p build
+        #godot --headless --export-release "Android" build/AlexHomeGames.apk - this only for real release, for debug we can use this:
+        godot --headless --export-debug "Android" build/AlexHomeGames-debug.apk
+
+    # -------------------------------------------------
+    # 6. Upload APK as artifact
+    # -------------------------------------------------
+    - name: Upload APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: android-apk
+        #path: build/AlexHomeGames.apk - for real release, for debug we use this: 
+        path: build/AlexHomeGames-debug.apk
