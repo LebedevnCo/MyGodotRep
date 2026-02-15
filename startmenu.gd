@@ -28,6 +28,7 @@ var scene_map = {
 }
 
 func _ready():
+	Global.is_multiplayer = false
 	#laodIP for multiplayer
 	show_local_ip()
 	multiplayer.connected_to_server.connect(_on_connected)
@@ -70,7 +71,9 @@ func _on_start_b_pressed() -> void:
 	
 	# Single player mode
 	else:
+		Global.is_multiplayer = false
 		start_game(selected_scene_path, Global.difficulty)
+	
 
 @rpc("authority", "call_local")
 func start_game(scene_path, difficulty):
@@ -116,6 +119,7 @@ func _on_host_b_pressed():
 		return
 		
 	multiplayer.multiplayer_peer = peer
+	Global.is_multiplayer = true
 	$VBoxContainer2/yIPLabel.text = "Hosting... My ID: " + \
 		str(multiplayer.get_unique_id())
 	
@@ -132,7 +136,9 @@ func _on_join_b_pressed():
 	if result != OK:
 		return
 	
+	Global.is_multiplayer = true
 	multiplayer.multiplayer_peer = peer
+	
 	
 
 func _on_connected():

@@ -43,7 +43,7 @@ func _cache_ground_cells():
 # -------------------------------------------------
 func _spawn_bot_pairs(pair_count: int):
 	for pair_index in range(pair_count):
-		_spawn_single_bot(bot1_scene, "BOT1", pair_index)
+		_spawn_single_bot(bot1_scene, "BOT1", pair_index,)
 		_spawn_single_bot(bot2_scene, "BOT2", pair_index)
 
 # -------------------------------------------------

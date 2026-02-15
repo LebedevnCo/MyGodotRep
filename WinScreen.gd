@@ -13,10 +13,6 @@ func _ready():
 func _on_button_pressed():
 	get_tree().paused = false
 
-	# 1️⃣ Увеличиваем сложность
-	Global.difficulty += 1
-	print("New difficulty:", Global.difficulty)
-
 	# 2️⃣ Выбираем новую сцену (не текущую)
 	var available_scenes: Array[String] = []
 

@@ -1,5 +1,6 @@
 [gd_scene format=3 uid="uid://dqjshjef1qa4f"]
 
+[ext_resource type="Script" uid="uid://b861f8trp1x7q" path="res://Battlefield.gd" id="1_5w7dd"]
 [ext_resource type="Texture2D" uid="uid://dysb63qh8p0wf" path="res://pics/groundSimple.png" id="3_ki6g1"]
 [ext_resource type="PackedScene" uid="uid://beg0q3e8eeg3h" path="res://spowner.tscn" id="4_5w7dd"]
 [ext_resource type="Script" uid="uid://dihufupr2al5i" path="res://V0.4 food.tres.gd" id="4_r2jhg"]
@@ -8,8 +9,9 @@
 [ext_resource type="PackedScene" uid="uid://c3p3mx4wfjulw" path="res://food.tscn" id="5_cho8x"]
 [ext_resource type="Texture2D" uid="uid://da3hetilt4rap" path="res://blueberry2.png" id="6_cho8x"]
 [ext_resource type="Texture2D" uid="uid://c2teaem2r0ks3" path="res://blueberry3.png" id="7_t7362"]
-[ext_resource type="Script" uid="uid://c7ubqygpwq5ti" path="res://player.gd" id="10_5w7dd"]
 [ext_resource type="PackedScene" uid="uid://cjtucr5yyml8o" path="res://player.tscn" id="10_r2jhg"]
+[ext_resource type="PackedScene" uid="uid://caofvcgxsjm08" path="res://MultiplayerPlayer.tscn" id="12_cho8x"]
+[ext_resource type="PackedScene" uid="uid://xkg32hukjcy4" path="res://player_spawner.tscn" id="13_r2jhg"]
 [ext_resource type="PackedScene" uid="uid://b4pn8kf4da1ac" path="res://bot_1.tscn" id="16_t7362"]
 [ext_resource type="Script" uid="uid://bfwumxoa3h7qy" path="res://botspowner.gd" id="17_oqklf"]
 [ext_resource type="PackedScene" uid="uid://lcawjkqbkarj" path="res://bot_2.tscn" id="18_8h62f"]
@@ -752,6 +754,7 @@ sources/0 = SubResource("TileSetAtlasSource_ki6g1")
 [node name="Main" type="Node2D" unique_id=1328952897]
 texture_repeat = 2
 position = Vector2(552, 368)
+script = ExtResource("1_5w7dd")
 
 [node name="GroundTileMap" type="TileMap" parent="." unique_id=1573801393]
 position = Vector2(-552, -368)
@@ -826,7 +829,10 @@ animation = &"blue"
 
 [node name="Player" parent="." unique_id=165833618 instance=ExtResource("10_r2jhg")]
 position = Vector2(0, -8)
-script = ExtResource("10_5w7dd")
+
+[node name="PlayerSpawner" parent="." unique_id=573885346 instance=ExtResource("13_r2jhg")]
+position = Vector2(8, -64)
+multiplayer_player_scene = ExtResource("12_cho8x")
 
 [node name="BotSpowner" parent="." unique_id=1250346053 instance=ExtResource("4_5w7dd")]
 position = Vector2(-552, -368)

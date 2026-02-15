@@ -10,6 +10,8 @@
 [ext_resource type="Texture2D" uid="uid://da3hetilt4rap" path="res://blueberry2.png" id="8_xrvdr"]
 [ext_resource type="Texture2D" uid="uid://c2teaem2r0ks3" path="res://blueberry3.png" id="9_bb7da"]
 [ext_resource type="PackedScene" uid="uid://cjtucr5yyml8o" path="res://player.tscn" id="10_1030c"]
+[ext_resource type="PackedScene" uid="uid://caofvcgxsjm08" path="res://MultiplayerPlayer.tscn" id="11_xu1hm"]
+[ext_resource type="PackedScene" uid="uid://xkg32hukjcy4" path="res://player_spawner.tscn" id="14_2nprs"]
 [ext_resource type="Script" uid="uid://bfwumxoa3h7qy" path="res://botspowner.gd" id="16_j5hlk"]
 [ext_resource type="PackedScene" uid="uid://b4pn8kf4da1ac" path="res://bot_1.tscn" id="17_1klmk"]
 [ext_resource type="PackedScene" uid="uid://lcawjkqbkarj" path="res://bot_2.tscn" id="18_egvwx"]
@@ -837,6 +839,10 @@ shape = SubResource("CircleShape2D_8h62f")
 scale = Vector2(0.01, 0.01)
 sprite_frames = SubResource("SpriteFrames_oqklf")
 animation = &"blue"
+
+[node name="PlayerSpawner" parent="." unique_id=573885346 instance=ExtResource("14_2nprs")]
+position = Vector2(312, 96)
+multiplayer_player_scene = ExtResource("11_xu1hm")
 
 [node name="Player" parent="." unique_id=165833618 instance=ExtResource("10_1030c")]
 position = Vector2(528, 272)

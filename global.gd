@@ -3,7 +3,7 @@ extends Node
 # -------------------------
 # 🎮 Состояние игры (сессия)
 # -------------------------
-
+var is_multiplayer := false
 # Текущая сложность
 var difficulty: int = 1
 
@@ -37,7 +37,6 @@ func next_level():
 	_update_score()
 
 func reset_session():
-	difficulty -= 1
 	bots_killed = 0
 	score = 0
 	current_scene_path = ""

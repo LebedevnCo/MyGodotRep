@@ -9,11 +9,8 @@ var SPEED: float = 150.0
 func _ready():
 	add_to_group("Player")
 	add_to_group("AllPlayers")
-	# Detect multiplayer mode
-	if Global.is_multiplayer:
-		deactivate_player()
-		return
-	print("Player global position:", global_position)
+	
+	print("MultiplayerPlayer global position:", global_position)
 	# Initial player size
 	var initial_player_size: float = 0.3
 	animated_sprite.scale = Vector2.ONE * initial_player_size
@@ -23,30 +20,6 @@ func _ready():
 	# Camera stays exactly on player
 	camera.position = Vector2.ZERO
 	camera.zoom = Vector2.ONE
-
-func deactivate_player():
-	print("Solo Player fully deactivated")
-
-	set_process(false)
-	set_physics_process(false)
-	set_process_input(false)
-	set_process_unhandled_input(false)
-
-	# Disable collisions
-	$PlayerCollisionShape2D.disabled = true
-	$"Yamnyam-Area2D"/CollisionShape2D.disabled = true
-
-	remove_from_group("Player")
-
-	# Hide sprite
-	animated_sprite.visible = false
-
-	# Disable camera
-	camera.enabled = false
-
-	# Disable UI completely
-	$CanvasLayer.visible = false
-
 
 func _physics_process(delta: float) -> void:
 	var input_vector := Vector2(
@@ -98,7 +71,6 @@ func show_lose_screen():
 	$CanvasLayer/LoseScreen.visible = true
 	$CanvasLayer/LoseScreen/Label2.text = "Score: " + str(Global.score)
 	animated_sprite.visible = false
-	
 
 # -------------------------------------------------
 # Food collision
@@ -122,6 +94,7 @@ func _on_yamnyam_area_2d_body_entered(body: Node2D) -> void:
 
 func on_bot_size_update(size_value: int):
 	$CanvasLayer/SizeLabel2.text = "Last bot size: " + str(size_value)
+
 func die():
 	remove_from_group("Player")
 

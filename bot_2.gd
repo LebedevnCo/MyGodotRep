@@ -2,7 +2,8 @@ extends CharacterBody2D
 
 @export var speed: float = 120.0
 @export var bot_size_multiplier: float = 1.3
-@export var growth_multiplier: float = 1.02
+@export var base_scale: float = 0.3
+@export var growth_multiplier: float = 1.015
 @export var speed_gain: float = 4.0
 @export var animation_name: String = "bot2"
 
@@ -20,8 +21,7 @@ var target: Node2D = null
 var turn_timer := 0.0
 
 # UI (debug)
-var size_label: Label = null
-
+signal bot_grew(new_size: int)
 # -------------------------------------------------
 # Init
 # -------------------------------------------------
@@ -35,20 +35,18 @@ func _ready() -> void:
 
 	direction = Vector2.RIGHT.rotated(randf() * TAU)
 
-	_init_size_from_player()
-	_find_size_label()
-	_update_size_label()
+	_init_size()
+	
+	
+	print("Bot2 spawned | size:",
+	int(round(sprite.scale.x * 100)),
+	"| speed:", speed)
 
 # -------------------------------------------------
 # Size logic
 # -------------------------------------------------
-func _init_size_from_player():
-	var player = get_tree().get_first_node_in_group("Player")
-	if not player:
-		return
-
-	var player_size: float = player.animated_sprite.scale.x
-	var bot_size: float = player_size * bot_size_multiplier
+func _init_size():
+	var bot_size: float = base_scale * bot_size_multiplier
 
 	sprite.scale = Vector2.ONE * bot_size
 	eat_area.scale = Vector2.ONE * bot_size
@@ -58,23 +56,14 @@ func _init_size_from_player():
 # -------------------------------------------------
 # UI helpers
 # -------------------------------------------------
-func _find_size_label():
-	var node := get_node_or_null("../../Player/CanvasLayer/SizeLabel2")
-	if node and node is Label:
-		size_label = node
-	else:
-		push_warning("Bot2: SizeLabel2 not found")
 
-func _update_size_label():
-	if size_label:
-		size_label.text = "Bot2 size: " + str(int(round(sprite.scale.x * 100)))
 
 # -------------------------------------------------
 # Movement (TileMap-aware, wall-priority)
 # -------------------------------------------------
 func _physics_process(delta: float) -> void:
 	turn_timer += delta
-	if turn_timer >= 5.0:
+	if turn_timer >= 3.0:
 		turn_timer = 0.0
 		direction = direction.rotated(deg_to_rad(randf_range(-35, 35)))
 
@@ -150,13 +139,15 @@ func _handle_player_detected(player: Node2D):
 # Growth
 # -------------------------------------------------
 func _grow():
-	sprite.scale *= growth_multiplier
-	eat_area.scale *= growth_multiplier
-	collision.scale *= growth_multiplier
-	detector.scale *= growth_multiplier
+	sprite.scale *= 1.03
+	eat_area.scale *= 1.03
+	collision.scale *= 1.03
+	detector.scale *= 1.03
 
-	speed = min(speed + speed_gain, 500.0)
-	_update_size_label()
+	speed = min(speed + 1.0, 500.0)
+
+	var size_value: int = int(round(sprite.scale.x * 100))
+	emit_signal("bot_grew", size_value)
 
 # -------------------------------------------------
 # Player vs Bot / Food
@@ -187,4 +178,4 @@ func _resolve_player_collision(player: Node2D):
 		if get_tree().get_nodes_in_group("bot").is_empty():
 			player.show_win_screen()
 	elif bot_size > player_size * 1.1:
-		player.show_lose_screen()
+		player.die()

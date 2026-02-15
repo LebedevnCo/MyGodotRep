@@ -2,6 +2,7 @@ extends CharacterBody2D
 
 @export var speed: float = 170.0
 @export var bot_size_multiplier: float = 0.8
+@export var base_scale: float = 0.3
 @export var ground_tilemap_path: NodePath = "../../GroundTileMap"
 @export var ground_layer: int = 0
 
@@ -17,8 +18,7 @@ var target: Node2D = null
 var turn_timer := 0.0
 
 # UI (debug label)
-var size_label: Label = null
-
+signal bot_grew(new_size: int)
 # -------------------------------------------------
 # Init
 # -------------------------------------------------
@@ -32,20 +32,17 @@ func _ready() -> void:
 
 	direction = Vector2.RIGHT.rotated(randf() * TAU)
 
-	_init_size_from_player()
-	_find_size_label()
-	_update_size_label()
+	_init_size()
+
+	print("Bot1 spawned | size:",
+	int(round(sprite.scale.x * 100)),
+	"| speed:", speed)
 
 # -------------------------------------------------
 # Size logic
 # -------------------------------------------------
-func _init_size_from_player():
-	var player = get_tree().get_first_node_in_group("Player")
-	if not player:
-		return
-
-	var player_size: float = player.animated_sprite.scale.x
-	var bot_size: float = player_size * bot_size_multiplier
+func _init_size():
+	var bot_size: float = base_scale * bot_size_multiplier
 
 	sprite.scale = Vector2.ONE * bot_size
 	eat_area.scale = Vector2.ONE * bot_size
@@ -55,24 +52,13 @@ func _init_size_from_player():
 # -------------------------------------------------
 # UI helpers
 # -------------------------------------------------
-func _find_size_label():
-	var node := get_node_or_null("../../Player/CanvasLayer/SizeLabel2")
-	if node and node is Label:
-		size_label = node
-	else:
-		push_warning("Bot: SizeLabel2 not found")
-
-func _update_size_label():
-	if size_label:
-		var size_value: int = int(round(sprite.scale.x * 100))
-		size_label.text = "Bot size: " + str(size_value)
 
 # -------------------------------------------------
 # Movement (TileMap-aware, wall-priority)
 # -------------------------------------------------
 func _physics_process(delta: float) -> void:
 	turn_timer += delta
-	if turn_timer >= 5.0:
+	if turn_timer >= 3.0:
 		turn_timer = 0.0
 		direction = direction.rotated(deg_to_rad(randf_range(-35, 35)))
 
@@ -165,7 +151,9 @@ func _grow():
 	detector.scale *= 1.03
 
 	speed = min(speed + 1.0, 500.0)
-	_update_size_label()
+
+	var size_value: int = int(round(sprite.scale.x * 100))
+	emit_signal("bot_grew", size_value)
 
 # -------------------------------------------------
 # Player vs Bot
@@ -181,4 +169,4 @@ func _resolve_player_collision(player: Node2D):
 
 
 	elif bot_size > player_size * 1.1:
-		player.show_lose_screen()
+		player.die()
