@@ -14,6 +14,7 @@ func _ready():
 	print("Player global position:", global_position)
 	
 	add_to_group("Player")
+	add_to_group("AllPlayers")
 	
 	
 	# Initial player size
