@@ -1,7 +1,7 @@
 extends CharacterBody2D
 
 var botcount = Global.difficulty + 1
-var SPEED: float = 150.0
+var SPEED: float = 250.0
 
 @onready var camera: Camera2D = $Camera2D
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
@@ -105,6 +105,7 @@ func on_bot_size_update(size_value: int):
 	$CanvasLayer/SizeLabel2.text = "Last bot size: " + str(size_value)
 func die():
 	remove_from_group("Player")
+	remove_from_group("AllPlayers")
 
 	set_process(false)
 	set_physics_process(false)

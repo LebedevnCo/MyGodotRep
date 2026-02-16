@@ -11,10 +11,17 @@
 [ext_resource type="Texture2D" uid="uid://c2teaem2r0ks3" path="res://blueberry3.png" id="9_dyfpd"]
 [ext_resource type="PackedScene" uid="uid://cjtucr5yyml8o" path="res://player.tscn" id="10_ahe78"]
 [ext_resource type="PackedScene" uid="uid://caofvcgxsjm08" path="res://MultiplayerPlayer.tscn" id="11_lgu5t"]
+[ext_resource type="Script" uid="uid://bt0yejbkrj6m0" path="res://canvas_layer.gd" id="12_yigit"]
+[ext_resource type="Texture2D" uid="uid://dtrjnfeml5uq0" path="res://iconpause.png" id="13_qfam2"]
+[ext_resource type="Texture2D" uid="uid://bhp5x1ii2fg21" path="res://iconPlay.png" id="14_16k5c"]
 [ext_resource type="PackedScene" uid="uid://xkg32hukjcy4" path="res://player_spawner.tscn" id="14_y28sw"]
+[ext_resource type="PackedScene" uid="uid://dmr0fcamx7t56" path="res://addons/virtual_joystick/virtual_joystick_scene.tscn" id="15_qo1rl"]
 [ext_resource type="Script" uid="uid://bfwumxoa3h7qy" path="res://botspowner.gd" id="16_4xk4u"]
+[ext_resource type="Script" uid="uid://dlrfumt8pw1w1" path="res://WinScreen.gd" id="16_dyfpd"]
 [ext_resource type="PackedScene" uid="uid://b4pn8kf4da1ac" path="res://bot_1.tscn" id="17_at711"]
+[ext_resource type="Texture2D" uid="uid://dewnll60bk4nn" path="res://iconrefresh.png" id="17_pdqvj"]
 [ext_resource type="PackedScene" uid="uid://lcawjkqbkarj" path="res://bot_2.tscn" id="18_2jnmn"]
+[ext_resource type="Texture2D" uid="uid://dvaxwmbtoa5c" path="res://ExitIcon.png" id="18_7w32i"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_t7362"]
 texture = ExtResource("2_iq57r")
@@ -756,6 +763,26 @@ animations = [{
 [sub_resource type="CircleShape2D" id="CircleShape2D_8h62f"]
 radius = 8.0
 
+[sub_resource type="LabelSettings" id="LabelSettings_83s21"]
+font_size = 20
+shadow_size = 2
+shadow_color = Color(0, 0, 0, 1)
+shadow_offset = Vector2(2, 2)
+
+[sub_resource type="LabelSettings" id="LabelSettings_lxw63"]
+shadow_color = Color(0, 0, 0, 1)
+shadow_offset = Vector2(2, 2)
+
+[sub_resource type="LabelSettings" id="LabelSettings_nruos"]
+shadow_color = Color(0, 0, 0, 0.9019608)
+shadow_offset = Vector2(2, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_xwaxb"]
+font_size = 20
+shadow_size = 2
+shadow_color = Color(0, 0, 0, 1)
+shadow_offset = Vector2(2, 2)
+
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ki6g1"]
 texture = ExtResource("3_n3p45")
 texture_region_size = Vector2i(1, 1)
@@ -844,6 +871,205 @@ animation = &"blue"
 position = Vector2(632, 264)
 multiplayer_player_scene = ExtResource("11_lgu5t")
 
+[node name="LocalCamera" type="Camera2D" parent="." unique_id=244520750]
+visible = false
+position = Vector2(25, -40)
+position_smoothing_enabled = true
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=48429112]
+process_mode = 3
+script = ExtResource("12_yigit")
+pause_icon = ExtResource("13_qfam2")
+play_icon = ExtResource("14_16k5c")
+
+[node name="SizeLabel" type="Label" parent="CanvasLayer" unique_id=1835684819]
+light_mask = 0
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 80.0
+offset_right = -4.0
+offset_bottom = 23.0
+grow_horizontal = 2
+horizontal_alignment = 2
+justification_flags = 0
+metadata/_edit_use_anchors_ = true
+
+[node name="SizeLabel2" type="Label" parent="CanvasLayer" unique_id=1908689802]
+light_mask = 0
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 80.0
+offset_top = 24.0
+offset_right = -4.0
+offset_bottom = 47.0
+grow_horizontal = 2
+horizontal_alignment = 2
+justification_flags = 0
+metadata/_edit_use_anchors_ = true
+
+[node name="Virtual joystick left" parent="CanvasLayer" unique_id=183036609 instance=ExtResource("15_qo1rl")]
+modulate = Color(1, 1, 1, 0.156863)
+anchors_preset = -1
+anchor_left = -1.167
+anchor_top = 0.51900005
+anchor_right = -0.187
+anchor_bottom = 1.457
+offset_left = 1328.384
+offset_top = 79.68796
+offset_right = 1359.4241
+offset_bottom = -304.136
+grow_horizontal = 2
+size_flags_vertical = 8
+pressed_color = Color(0.355313, 0.355314, 0.355314, 1)
+deadzone_size = 15.0
+clampzone_size = 70.0
+joystick_mode = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="WinScreen" type="Control" parent="CanvasLayer" unique_id=296031360]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("16_dyfpd")
+metadata/_edit_use_anchors_ = true
+
+[node name="Button" type="Button" parent="CanvasLayer/WinScreen" unique_id=294782809]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -56.0
+offset_top = -112.0
+offset_right = 38.0
+offset_bottom = -81.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Play again?"
+metadata/_edit_use_anchors_ = true
+
+[node name="Label2" type="Label" parent="CanvasLayer/WinScreen" unique_id=473863238]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.24305555
+anchor_top = 0.41975307
+anchor_right = 0.24305555
+anchor_bottom = 0.41975307
+offset_left = 216.0
+offset_top = -152.0
+offset_right = 365.0
+offset_bottom = -129.0
+label_settings = SubResource("LabelSettings_83s21")
+horizontal_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="Label" type="Label" parent="CanvasLayer/WinScreen" unique_id=1893347888]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.2361111
+anchor_top = 0.45679012
+anchor_right = 0.2361111
+anchor_bottom = 0.45679012
+offset_left = 216.0
+offset_top = -152.0
+offset_right = 365.00012
+offset_bottom = -129.0
+text = "Congrats! You won!"
+label_settings = SubResource("LabelSettings_lxw63")
+horizontal_alignment = 1
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="LoseScreen" type="Control" parent="CanvasLayer" unique_id=910564597]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("16_dyfpd")
+metadata/_edit_use_anchors_ = true
+
+[node name="Label" type="Label" parent="CanvasLayer/LoseScreen" unique_id=308913735]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.47916666
+anchor_top = 0.45679012
+anchor_right = 0.5407986
+anchor_bottom = 0.45679012
+offset_left = -80.0
+offset_top = -152.0
+offset_right = 69.0
+offset_bottom = -129.0
+text = "How can it be? he eat you???"
+label_settings = SubResource("LabelSettings_nruos")
+horizontal_alignment = 1
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="Button" type="Button" parent="CanvasLayer/LoseScreen" unique_id=1139796308]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -56.0
+offset_top = -112.0
+offset_right = 38.0
+offset_bottom = -81.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Play again?"
+metadata/_edit_use_anchors_ = true
+
+[node name="Label2" type="Label" parent="CanvasLayer/LoseScreen" unique_id=791224964]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5069444
+anchor_top = 0.37037036
+anchor_right = 0.5069444
+anchor_bottom = 0.37037036
+offset_left = -80.0
+offset_top = -152.0
+offset_right = 69.0
+offset_bottom = -129.0
+label_settings = SubResource("LabelSettings_xwaxb")
+horizontal_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="PauseButton" type="Button" parent="CanvasLayer" unique_id=131758463]
+offset_left = 80.0
+offset_top = 8.0
+offset_right = 120.0
+offset_bottom = 48.0
+focus_mode = 0
+icon = ExtResource("13_qfam2")
+metadata/_edit_use_anchors_ = true
+
+[node name="RestartButton" type="Button" parent="CanvasLayer" unique_id=1615391326]
+offset_left = 24.0
+offset_top = 8.0
+offset_right = 76.0
+offset_bottom = 60.0
+focus_mode = 0
+icon = ExtResource("17_pdqvj")
+metadata/_edit_use_anchors_ = true
+
+[node name="SettingsButton" type="Button" parent="CanvasLayer" unique_id=410030787]
+offset_left = 136.0
+offset_top = 8.0
+offset_right = 209.0
+offset_bottom = 81.0
+scale = Vector2(0.7, 0.7)
+focus_mode = 0
+icon = ExtResource("18_7w32i")
+metadata/_edit_use_anchors_ = true
+
 [node name="Player" parent="." unique_id=165833618 instance=ExtResource("10_ahe78")]
 position = Vector2(616, 312)
 
@@ -866,3 +1092,9 @@ position = Vector2(768, 144)
 
 [node name="Bot2" parent="BotSpowner" unique_id=981516701 instance=ExtResource("17_at711")]
 position = Vector2(456, 480)
+
+[connection signal="pressed" from="CanvasLayer/WinScreen/Button" to="CanvasLayer/WinScreen" method="_on_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/LoseScreen/Button" to="CanvasLayer/LoseScreen" method="_on_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/PauseButton" to="CanvasLayer" method="_on_pause_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/RestartButton" to="CanvasLayer" method="_on_restart_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/SettingsButton" to="CanvasLayer" method="_on_settings_button_pressed"]

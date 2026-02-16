@@ -2,4 +2,4 @@
 .godot/
 
 # Ignore Android build artifacts only
-/android/build/
+/android/
