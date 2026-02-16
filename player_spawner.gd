@@ -2,6 +2,7 @@ extends Node2D
 
 @export var multiplayer_player_scene: PackedScene
 
+@rpc("authority", "call_local")
 func spawn_player(peer_id: int):
 	if multiplayer_player_scene == null:
 		print("No multiplayer player assigned!")

@@ -9,6 +9,18 @@ var SPEED: float = 150.0
 func _ready():
 	add_to_group("Player")
 	add_to_group("AllPlayers")
+	var my_id = multiplayer.get_unique_id()
+	var owner_id = get_multiplayer_authority()
+
+		
+	if is_multiplayer_authority():
+		#camera.make_current()
+		camera.position = Vector2.ZERO
+		camera.zoom = Vector2.ONE
+		#$CanvasLayer.visible = true
+	#else:
+		#camera.enabled = false
+		#$CanvasLayer.visible = false
 	
 	print("MultiplayerPlayer global position:", global_position)
 	# Initial player size
@@ -17,11 +29,10 @@ func _ready():
 	$"Yamnyam-Area2D".scale = Vector2.ONE * initial_player_size
 	$PlayerCollisionShape2D.scale = Vector2.ONE * initial_player_size
 
-	# Camera stays exactly on player
-	camera.position = Vector2.ZERO
-	camera.zoom = Vector2.ONE
-
 func _physics_process(delta: float) -> void:
+	# 🚫 If this player is NOT controlled by this peer → do nothing
+	if not is_multiplayer_authority():
+		return
 	var input_vector := Vector2(
 		Input.get_axis("ui_left", "ui_right"),
 		Input.get_axis("ui_up", "ui_down")
@@ -59,7 +70,14 @@ func update_ui():
 	var player_size: int = int(round(animated_sprite.scale.x * 100))
 	var bot_count: int = get_tree().get_nodes_in_group("bot").size()
 
-	$CanvasLayer/SizeLabel.text = "Alex (" + str(player_size) + ") | Bots: " + str(bot_count)+ " | Score: "+ str(Global.score)
+	var role := ""
+
+	if multiplayer.is_server():
+		role = "Host"
+	else:
+		role = "Player"
+
+	$CanvasLayer/SizeLabel.text = role + " (" + str(player_size) + ") | Bots: " + str(bot_count) + " | Score: " + str(Global.score)
 
 func show_win_screen():
 	$CanvasLayer/WinScreen.visible = true

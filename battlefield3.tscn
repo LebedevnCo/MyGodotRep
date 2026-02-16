@@ -840,12 +840,11 @@ scale = Vector2(0.01, 0.01)
 sprite_frames = SubResource("SpriteFrames_oqklf")
 animation = &"blue"
 
+[node name="Player" parent="." unique_id=165833618 instance=ExtResource("10_1030c")]
+
 [node name="PlayerSpawner" parent="." unique_id=573885346 instance=ExtResource("14_2nprs")]
 position = Vector2(312, 96)
 multiplayer_player_scene = ExtResource("11_xu1hm")
-
-[node name="Player" parent="." unique_id=165833618 instance=ExtResource("10_1030c")]
-position = Vector2(528, 272)
 
 [node name="TileMap2" type="TileMap" parent="." unique_id=553753165]
 light_mask = 0

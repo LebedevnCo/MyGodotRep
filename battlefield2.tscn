@@ -841,7 +841,7 @@ sprite_frames = SubResource("SpriteFrames_oqklf")
 animation = &"blue"
 
 [node name="PlayerSpawner" parent="." unique_id=573885346 instance=ExtResource("14_y28sw")]
-position = Vector2(608, 264)
+position = Vector2(632, 264)
 multiplayer_player_scene = ExtResource("11_lgu5t")
 
 [node name="Player" parent="." unique_id=165833618 instance=ExtResource("10_ahe78")]

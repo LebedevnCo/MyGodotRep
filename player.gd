@@ -7,13 +7,15 @@ var SPEED: float = 150.0
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 
 func _ready():
-	add_to_group("Player")
-	add_to_group("AllPlayers")
 	# Detect multiplayer mode
 	if Global.is_multiplayer:
-		deactivate_player()
+		queue_free()
 		return
 	print("Player global position:", global_position)
+	
+	add_to_group("Player")
+	
+	
 	# Initial player size
 	var initial_player_size: float = 0.3
 	animated_sprite.scale = Vector2.ONE * initial_player_size
@@ -24,28 +26,6 @@ func _ready():
 	camera.position = Vector2.ZERO
 	camera.zoom = Vector2.ONE
 
-func deactivate_player():
-	print("Solo Player fully deactivated")
-
-	set_process(false)
-	set_physics_process(false)
-	set_process_input(false)
-	set_process_unhandled_input(false)
-
-	# Disable collisions
-	$PlayerCollisionShape2D.disabled = true
-	$"Yamnyam-Area2D"/CollisionShape2D.disabled = true
-
-	remove_from_group("Player")
-
-	# Hide sprite
-	animated_sprite.visible = false
-
-	# Disable camera
-	camera.enabled = false
-
-	# Disable UI completely
-	$CanvasLayer.visible = false
 
 
 func _physics_process(delta: float) -> void:

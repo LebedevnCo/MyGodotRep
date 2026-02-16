@@ -38,7 +38,7 @@ func _ready():
 	splash = $TextureRect
 	splash.show()
 
-	await get_tree().create_timer(5.0).timeout
+	await get_tree().create_timer(2.0).timeout
 	splash.hide()
 	
 	# Get UI nodes
@@ -144,6 +144,3 @@ func _on_join_b_pressed():
 func _on_connected():
 	$VBoxContainer2/yIPLabel.text = "Connected! My ID: " + \
 		str(multiplayer.get_unique_id())
-
-#func _on_peer_connected(id):
-	#$VBoxContainer2/yIPLabel.text = "Peer connected: " + str(id)

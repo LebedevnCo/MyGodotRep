@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://bt0yejbkrj6m0" path="res://canvas_layer.gd" id="5_xtp7x"]
 [ext_resource type="PackedScene" uid="uid://dmr0fcamx7t56" path="res://addons/virtual_joystick/virtual_joystick_scene.tscn" id="6_luswl"]
 [ext_resource type="Script" uid="uid://dlrfumt8pw1w1" path="res://WinScreen.gd" id="7_saf70"]
+[ext_resource type="Texture2D" uid="uid://bhp5x1ii2fg21" path="res://iconPlay.png" id="7_uvvwn"]
 [ext_resource type="Texture2D" uid="uid://dtrjnfeml5uq0" path="res://iconpause.png" id="8_syjbb"]
 [ext_resource type="Texture2D" uid="uid://dewnll60bk4nn" path="res://iconrefresh.png" id="9_sbpsj"]
 [ext_resource type="Texture2D" uid="uid://dvaxwmbtoa5c" path="res://ExitIcon.png" id="10_itdtg"]
@@ -89,6 +90,8 @@ position_smoothing_enabled = true
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1387815508]
 process_mode = 3
 script = ExtResource("5_xtp7x")
+pause_icon = ExtResource("8_syjbb")
+play_icon = ExtResource("7_uvvwn")
 
 [node name="SizeLabel" type="Label" parent="CanvasLayer" unique_id=268123692]
 light_mask = 0
@@ -98,7 +101,6 @@ offset_left = 80.0
 offset_right = -4.0
 offset_bottom = 23.0
 grow_horizontal = 2
-text = "Alex ()"
 horizontal_alignment = 2
 justification_flags = 0
 metadata/_edit_use_anchors_ = true

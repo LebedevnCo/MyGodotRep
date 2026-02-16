@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://bt0yejbkrj6m0" path="res://canvas_layer.gd" id="4_b26j0"]
 [ext_resource type="PackedScene" uid="uid://dmr0fcamx7t56" path="res://addons/virtual_joystick/virtual_joystick_scene.tscn" id="5_n7ghd"]
 [ext_resource type="Script" uid="uid://dlrfumt8pw1w1" path="res://WinScreen.gd" id="6_nvl01"]
+[ext_resource type="Texture2D" uid="uid://bhp5x1ii2fg21" path="res://iconPlay.png" id="7_nvl01"]
 [ext_resource type="Texture2D" uid="uid://dtrjnfeml5uq0" path="res://iconpause.png" id="8_n7ghd"]
 [ext_resource type="Texture2D" uid="uid://dewnll60bk4nn" path="res://iconrefresh.png" id="9_nvl01"]
 [ext_resource type="Texture2D" uid="uid://dvaxwmbtoa5c" path="res://ExitIcon.png" id="10_ivps1"]
@@ -89,6 +90,8 @@ position_smoothing_enabled = true
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1387815508]
 process_mode = 3
 script = ExtResource("4_b26j0")
+pause_icon = ExtResource("8_n7ghd")
+play_icon = ExtResource("7_nvl01")
 
 [node name="SizeLabel" type="Label" parent="CanvasLayer" unique_id=268123692]
 light_mask = 0

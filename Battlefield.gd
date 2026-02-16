@@ -1,17 +1,36 @@
 extends Node2D
 var game_over := false
 func _ready():
-	_connect_existing_bots()
 
 	if Global.is_multiplayer:
-		call_deferred("spawn_multiplayer")
 
-		if multiplayer.is_server():
-			multiplayer.peer_connected.connect(_on_peer_connected)
+		# 🔥 Remove ALL solo players immediately
+		for child in get_children():
+			if child.name == "Player":
+				child.queue_free()
+
+	# Continue normal setup
+	_connect_existing_bots()
+
+	if Global.is_multiplayer and multiplayer.is_server():
+
+		multiplayer.peer_connected.connect(_on_peer_connected)
+
+		# Spawn host
+		var host_id = multiplayer.get_unique_id()
+		$PlayerSpawner.spawn_player.rpc(host_id)
+
+		# Spawn already connected peers
+		for id in multiplayer.get_peers():
+			$PlayerSpawner.spawn_player.rpc(id)
+	
+
+	_connect_existing_bots()
+	print("Children at start:", get_children())
 
 func _on_peer_connected(id):
 	print("Peer connected:", id)
-	$PlayerSpawner.spawn_player(id)
+	$PlayerSpawner.spawn_player.rpc(id)
 	
 func _process(delta):
 	if game_over:
@@ -57,7 +76,7 @@ func _end_game(is_win: bool):
 func spawn_multiplayer():
 	if multiplayer.is_server():
 		var host_id = multiplayer.get_unique_id()
-		$PlayerSpawner.spawn_player(host_id)
+		$PlayerSpawner.spawn_player.rpc(host_id)
 
 func _connect_existing_bots():
 	for bot in get_tree().get_nodes_in_group("bot"):
