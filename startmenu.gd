@@ -27,6 +27,7 @@ var scene_map = {
 	3: "res://battlefield3.tscn"
 }
 
+
 func _ready():
 	Global.is_multiplayer = false
 	#laodIP for multiplayer
@@ -58,6 +59,9 @@ func _ready():
 
 	print("Start menu ready")
 	print("Default battlefield:", selected_scene_path)
+	# Ensure solo mode behaves like server (spawners relying on is_server keep working)
+	if multiplayer.multiplayer_peer == null or not (multiplayer.multiplayer_peer is OfflineMultiplayerPeer):
+		multiplayer.multiplayer_peer = OfflineMultiplayerPeer.new()
 
 # ---------- BUTTONS ----------
 
@@ -85,7 +89,7 @@ func _on_exit_b_pressed() -> void:
 
 # ---------- SLIDERS ----------
 
-func _on_shape_slider_drag_ended(value_changed: bool) -> void:
+func _on_shape_slider_drag_ended(_value_changed: bool) -> void:
 	var shape_index := int(shape_slider.value)
 
 	selected_shape = shape_map[shape_index]
@@ -96,7 +100,7 @@ func _on_shape_slider_drag_ended(value_changed: bool) -> void:
 
 	print("Selected battlefield:", selected_scene_path)
 
-func _on_diff_slider_drag_ended(value_changed: bool) -> void:
+func _on_diff_slider_drag_ended(_value_changed: bool) -> void:
 	var difficulty := int(difficulty_slider.value)
 	$VBoxContainer/DiffLabel.text = "Difficulty: " + str(difficulty)
 

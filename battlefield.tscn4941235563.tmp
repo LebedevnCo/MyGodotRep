@@ -5,10 +5,6 @@
 [ext_resource type="PackedScene" uid="uid://beg0q3e8eeg3h" path="res://spowner.tscn" id="4_5w7dd"]
 [ext_resource type="Script" uid="uid://b0p883rg1jgvv" path="res://multiplayer_spawner.gd" id="4_8h62f"]
 [ext_resource type="Texture2D" uid="uid://dh8x64whfla0u" path="res://pics/battlefield2.png" id="4_sg2xi"]
-[ext_resource type="PackedScene" uid="uid://c3p3mx4wfjulw" path="res://food.tscn" id="5_cho8x"]
-[ext_resource type="Script" uid="uid://stouqn80xh8u" path="res://bot_net_spawner.gd" id="5_dq2i8"]
-[ext_resource type="Script" uid="uid://cq5qtkv58b4p4" path="res://bot_2_net_spawn.gd" id="6_vr0sn"]
-[ext_resource type="Script" uid="uid://x4jc15u1vauf" path="res://Bot2Spawner.gd" id="10_qfali"]
 [ext_resource type="PackedScene" uid="uid://cjtucr5yyml8o" path="res://player.tscn" id="10_r2jhg"]
 [ext_resource type="PackedScene" uid="uid://caofvcgxsjm08" path="res://MultiplayerPlayer.tscn" id="12_cho8x"]
 [ext_resource type="PackedScene" uid="uid://xkg32hukjcy4" path="res://player_spawner.tscn" id="13_r2jhg"]
@@ -722,23 +718,11 @@ terrain_set_0/terrain_1/color = Color(0.5, 0.4375, 0.25, 1)
 sources/0 = SubResource("TileSetAtlasSource_t7362")
 sources/2 = SubResource("TileSetAtlasSource_m83rw")
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vr0sn"]
-bg_color = Color(0, 0, 0, 0.43137255)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qfali"]
-bg_color = Color(0, 0, 0, 0.3529412)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3f6fh"]
-bg_color = Color(0, 0, 0, 0.54901963)
-
 [sub_resource type="LabelSettings" id="LabelSettings_in4fn"]
 font_size = 20
 shadow_size = 2
 shadow_color = Color(0, 0, 0, 1)
 shadow_offset = Vector2(2, 2)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_w76af"]
-bg_color = Color(0, 0, 0, 0.54901963)
 
 [sub_resource type="LabelSettings" id="LabelSettings_wb8xq"]
 shadow_color = Color(0, 0, 0, 1)
@@ -769,35 +753,12 @@ layer_0/tile_data = PackedInt32Array(3, 65536, 1, -65533, 65536, 1, 2, 65536, 1,
 
 [node name="Dynamic" type="Node2D" parent="." unique_id=1250067090]
 
-[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="." unique_id=473357867]
+[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="." unique_id=1510408610]
 spawn_path = NodePath("../Dynamic")
 script = ExtResource("4_8h62f")
 
-[node name="Bot1NetSpawn" type="MultiplayerSpawner" parent="." unique_id=471138955]
-spawn_path = NodePath("../Dynamic")
-script = ExtResource("5_dq2i8")
-
-[node name="Bot2NetSpawn" type="MultiplayerSpawner" parent="." unique_id=1549612746]
-spawn_path = NodePath("../Dynamic")
-script = ExtResource("6_vr0sn")
-
-[node name="Bot1Spawner" parent="." unique_id=1250346053 instance=ExtResource("4_5w7dd")]
-position = Vector2(-552, -368)
-script = ExtResource("17_oqklf")
-bot_scene = ExtResource("16_t7362")
-net_spawner_path = NodePath("../Bot1NetSpawn")
-player_block_rect_size = Vector2(300, 300)
-
-[node name="Bot2Spawner" parent="." unique_id=386606997 instance=ExtResource("4_5w7dd")]
-position = Vector2(-552, -368)
-script = ExtResource("10_qfali")
-bot_scene = ExtResource("18_8h62f")
-net_spawner_path = NodePath("../Bot2NetSpawn")
-player_block_rect_size = Vector2(300, 300)
-
 [node name="Spowner" parent="." unique_id=803868159 instance=ExtResource("4_5w7dd")]
 position = Vector2(-552, -368)
-food_scene = ExtResource("5_cho8x")
 
 [node name="PlayerSpawner" parent="." unique_id=573885346 instance=ExtResource("13_r2jhg")]
 position = Vector2(8, -64)
@@ -816,27 +777,25 @@ play_icon = ExtResource("15_3f6fh")
 
 [node name="SizeLabel" type="Label" parent="CanvasLayer" unique_id=18235638]
 light_mask = 0
-anchors_preset = 1
-anchor_left = 1.0
+anchors_preset = 10
 anchor_right = 1.0
-offset_left = -1.0
+offset_left = 80.0
+offset_right = -4.0
 offset_bottom = 23.0
-grow_horizontal = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_vr0sn")
+grow_horizontal = 2
 horizontal_alignment = 2
 justification_flags = 0
 metadata/_edit_use_anchors_ = true
 
 [node name="SizeLabel2" type="Label" parent="CanvasLayer" unique_id=1927832369]
 light_mask = 0
-anchors_preset = 1
-anchor_left = 1.0
+anchors_preset = 10
 anchor_right = 1.0
-offset_top = 20.0
-offset_right = 1.0
-offset_bottom = 43.0
-grow_horizontal = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_qfali")
+offset_left = 80.0
+offset_top = 24.0
+offset_right = -4.0
+offset_bottom = 47.0
+grow_horizontal = 2
 horizontal_alignment = 2
 justification_flags = 0
 metadata/_edit_use_anchors_ = true
@@ -897,7 +856,6 @@ offset_left = 216.0
 offset_top = -152.0
 offset_right = 365.0
 offset_bottom = -129.0
-theme_override_styles/normal = SubResource("StyleBoxFlat_3f6fh")
 label_settings = SubResource("LabelSettings_in4fn")
 horizontal_alignment = 1
 metadata/_edit_use_anchors_ = true
@@ -913,7 +871,6 @@ offset_left = 216.0
 offset_top = -152.0
 offset_right = 365.00012
 offset_bottom = -129.0
-theme_override_styles/normal = SubResource("StyleBoxFlat_w76af")
 text = "Congrats! You won!"
 label_settings = SubResource("LabelSettings_wb8xq")
 horizontal_alignment = 1
@@ -950,6 +907,18 @@ metadata/_edit_use_anchors_ = true
 
 [node name="Player" parent="." unique_id=165833618 instance=ExtResource("10_r2jhg")]
 position = Vector2(0, -8)
+
+[node name="BotSpowner" parent="." unique_id=1250346053 instance=ExtResource("4_5w7dd")]
+position = Vector2(-552, -368)
+script = ExtResource("17_oqklf")
+bot1_scene = ExtResource("16_t7362")
+bot2_scene = ExtResource("18_8h62f")
+
+[node name="Bot1" parent="BotSpowner" unique_id=338742712 instance=ExtResource("16_t7362")]
+position = Vector2(432, 56)
+
+[node name="Bot2" parent="BotSpowner" unique_id=981516701 instance=ExtResource("16_t7362")]
+position = Vector2(-32, 520)
 
 [node name="TileMap2" type="TileMap" parent="." unique_id=553753165]
 light_mask = 0

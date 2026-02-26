@@ -30,5 +30,22 @@ func _on_restart_button_pressed() -> void:
 
 
 func _on_settings_button_pressed() -> void:
+
 	get_tree().paused = false
+
+	# 1️⃣ Disconnect multiplayer completely
+	if multiplayer.multiplayer_peer != null:
+		multiplayer.multiplayer_peer.close()
+		# ✅ Force singleplayer multiplayer API into "local server" mode
+		multiplayer.multiplayer_peer = OfflineMultiplayerPeer.new()
+		
+
+	# 2️⃣ Reset global state
+	Global.reset_session()
+	Global.is_multiplayer = false
+	Global.difficulty = 1
+	Global.bots_killed = 0
+	Global.score = 0
+
+	# 3️⃣ Go back to start menu
 	get_tree().change_scene_to_file("res://startmenu.tscn")

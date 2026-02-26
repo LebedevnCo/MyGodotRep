@@ -28,7 +28,7 @@ func _ready() -> void:
 	print("[Bot1Spawner] valid_cells=", valid_cells.size())
 
 	var difficulty := int(Global.difficulty)
-	var bot_to_spawn := 2 + (difficulty - 1)
+	var bot_to_spawn := (difficulty - 1)
 
 	spawner.spawn_path = dynamic_parent.get_path()
 

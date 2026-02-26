@@ -1,5 +1,8 @@
 extends CharacterBody2D
 
+func _is_authority() -> bool:
+	return (not Global.is_multiplayer) or multiplayer.is_server()
+
 @export var speed: float = 120.0
 @export var bot_size_multiplier: float = 1.3
 @export var base_scale: float = 0.3
@@ -27,20 +30,38 @@ signal bot_grew(new_size: int)
 # -------------------------------------------------
 func _ready() -> void:
 	add_to_group("bot")
+	
+	# Make server authoritative for bots in multiplayer
+	if Global.is_multiplayer:
+		set_multiplayer_authority(1)
+
+	# If not server, disable AI (your Step 0 code)
+	if Global.is_multiplayer and not multiplayer.is_server():
+		set_physics_process(false)
+		set_process(false)
+		return
+	
+	print("[Bot] peer=", multiplayer.get_unique_id(),
+	" authority=", get_multiplayer_authority(),
+	" is_server=", multiplayer.is_server())
 
 	ground = get_node(ground_tilemap_path) as TileMap
 	if ground == null:
-		push_error("Bot2: GroundTileMap not found")
+		push_error("Bot: GroundTileMap not found")
+		return
+
+	# Multiplayer: clients should not run bot AI / movement / decisions
+	if Global.is_multiplayer and not multiplayer.is_server():
+		set_physics_process(false)
+		set_process(false)
+		# You can still show an idle animation if you want:
+		# sprite.play("bot1")
 		return
 
 	direction = Vector2.RIGHT.rotated(randf() * TAU)
-
 	_init_size()
-	
-	
-	print("Bot2 spawned | size:",
-	int(round(sprite.scale.x * 100)),
-	"| speed:", speed)
+
+	print("Bot spawned | size:", int(round(sprite.scale.x * 100)), "| speed:", speed)
 
 # -------------------------------------------------
 # Size logic
@@ -62,6 +83,9 @@ func _init_size():
 # Movement (TileMap-aware, wall-priority)
 # -------------------------------------------------
 func _physics_process(delta: float) -> void:
+	#return #delete if you want bot moving
+	if not _is_authority():
+		return
 	turn_timer += delta
 	if turn_timer >= 3.0:
 		turn_timer = 0.0
@@ -109,6 +133,8 @@ func _can_move_towards(dir: Vector2) -> bool:
 # Detection logic (advisory only)
 # -------------------------------------------------
 func _on_detector_area_2d_body_entered(body: Node2D) -> void:
+	if not _is_authority():
+		return
 	if body.is_in_group("Food") and target == null:
 		var dir := (body.global_position - global_position).normalized()
 		if _can_move_towards(dir):
@@ -118,6 +144,8 @@ func _on_detector_area_2d_body_entered(body: Node2D) -> void:
 		_handle_player_detected(body)
 
 func _on_detector_area_2d_body_exited(body: Node2D) -> void:
+	if not _is_authority():
+		return
 	if body == target:
 		target = null
 
@@ -154,6 +182,8 @@ func _grow():
 # (FUNCTION NAME KEPT AS REQUESTED)
 # -------------------------------------------------
 func _on_eat_area_2d_body_entered(body: Node2D) -> void:
+	if not _is_authority():
+		return
 	if body.is_in_group("Food"):
 		_grow()
 		body.queue_free()

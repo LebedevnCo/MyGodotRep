@@ -1,5 +1,8 @@
 extends CharacterBody2D
 
+func _is_authority() -> bool:
+	return (not Global.is_multiplayer) or multiplayer.is_server()
+
 @export var speed: float = 170.0
 @export var bot_size_multiplier: float = 0.8
 @export var base_scale: float = 0.3
@@ -24,6 +27,22 @@ signal bot_grew(new_size: int)
 # -------------------------------------------------
 func _ready() -> void:
 	add_to_group("bot")
+
+	# Make server authoritative for bots in multiplayer
+	if Global.is_multiplayer:
+		set_multiplayer_authority(1)
+
+	# If not server, disable AI (your Step 0 code)
+	if Global.is_multiplayer and not multiplayer.is_server():
+		set_physics_process(false)
+		set_process(false)
+		return
+	
+	print("[Bot] peer=", multiplayer.get_unique_id(),
+	" authority=", get_multiplayer_authority(),
+	" is_server=", multiplayer.is_server())
+
+	# ... rest of your existing _ready()
 
 	ground = get_node(ground_tilemap_path) as TileMap
 	if ground == null:
@@ -57,6 +76,8 @@ func _init_size():
 # Movement (TileMap-aware, wall-priority)
 # -------------------------------------------------
 func _physics_process(delta: float) -> void:
+	if not _is_authority():
+		return
 	turn_timer += delta
 	if turn_timer >= 3.0:
 		turn_timer = 0.0
@@ -105,6 +126,8 @@ func _can_move_towards(dir: Vector2) -> bool:
 # Detection logic (advisory only)
 # -------------------------------------------------
 func _on_detector_area_2d_body_entered(body: Node2D) -> void:
+	if not _is_authority():
+		return
 	if body.is_in_group("Food") and target == null:
 		var dir := (body.global_position - global_position).normalized()
 		if _can_move_towards(dir):
@@ -114,6 +137,8 @@ func _on_detector_area_2d_body_entered(body: Node2D) -> void:
 		_handle_player_detected(body)
 
 func _on_detector_area_2d_body_exited(body: Node2D) -> void:
+	if not _is_authority():
+		return
 	if body == target:
 		target = null
 
@@ -135,6 +160,8 @@ func _handle_player_detected(player: Node2D):
 # Eating food
 # -------------------------------------------------
 func _on_area_2d_body_entered(body: Node2D) -> void:
+	if not _is_authority():
+		return
 	if body.is_in_group("Food"):
 		_grow()
 		body.queue_free()
