@@ -34,17 +34,6 @@ radius = 533.333
 [sub_resource type="CircleShape2D" id="CircleShape2D_2wtct"]
 radius = 53.3333
 
-[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_nld6c"]
-properties/0/path = NodePath(".:position")
-properties/0/spawn = true
-properties/0/replication_mode = 1
-properties/1/path = NodePath(".:speed")
-properties/1/spawn = true
-properties/1/replication_mode = 1
-properties/2/path = NodePath(".:rotation")
-properties/2/spawn = true
-properties/2/replication_mode = 1
-
 [node name="bot2" type="CharacterBody2D" unique_id=1339611267 groups=["bot"]]
 position = Vector2(-40, 0)
 collision_layer = 2
@@ -87,9 +76,6 @@ position = Vector2(16, 0)
 scale = Vector2(0.3, 0.3)
 shape = SubResource("CircleShape2D_2wtct")
 debug_color = Color(0.160444, 0.624201, 0.462746, 0.42)
-
-[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=129306812]
-replication_config = SubResource("SceneReplicationConfig_nld6c")
 
 [connection signal="body_entered" from="EatArea2D" to="." method="_on_eat_area_2d_body_entered"]
 [connection signal="body_entered" from="DetectorArea2D" to="." method="_on_detector_area_2d_body_entered"]

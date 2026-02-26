@@ -1,7 +1,27 @@
 extends CharacterBody2D
+@rpc("unreliable")
+func sync_state(pos: Vector2, rot: float, scale_x: float, speed_val: float) -> void:
+	# Server is the source of truth
+	if multiplayer.is_server():
+		return
+
+	global_position = pos
+	rotation = rot
+
+	# apply size on client
+	var s := Vector2.ONE * scale_x
+	sprite.scale = s
+	eat_area.scale = s
+	collision.scale = s
+	detector.scale = s
+
+	# optional: keep speed in sync too
+	speed = speed_val
 
 func _is_authority() -> bool:
 	return (not Global.is_multiplayer) or multiplayer.is_server()
+	
+
 
 @export var speed: float = 170.0
 @export var bot_size_multiplier: float = 0.8
@@ -110,6 +130,9 @@ func _physics_process(delta: float) -> void:
 		sprite.stop()
 
 	move_and_slide()
+	# Replicate state to everyone (after movement)
+	if Global.is_multiplayer and multiplayer.is_server():
+		sync_state.rpc(global_position, rotation, sprite.scale.x, speed)
 
 # -------------------------------------------------
 # Ground checks
@@ -190,10 +213,22 @@ func _resolve_player_collision(player: Node2D):
 	var bot_size: float = sprite.scale.x
 
 	if player_size > bot_size * 1.1:
-		player.animated_sprite.scale *= 1.02
+		player.animated_sprite.scale *= 1.05
 		Global.register_bot_kill()
 		queue_free()
 
 
 	elif bot_size > player_size * 1.1:
 		player.die()
+		_grow_from_player()
+		
+func _grow_from_player():
+	sprite.scale *= 1.1
+	eat_area.scale *= 1.1
+	collision.scale *= 1.1
+	detector.scale *= 1.1
+
+	speed = min(speed + 3.0, 500.0)
+
+	var size_value: int = int(round(sprite.scale.x * 100))
+	emit_signal("bot_grew", size_value)
