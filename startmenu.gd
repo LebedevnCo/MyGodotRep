@@ -124,6 +124,8 @@ func _on_host_b_pressed():
 		
 	multiplayer.multiplayer_peer = peer
 	Global.is_multiplayer = true
+	$VBoxContainer2/JoinB.visible = false
+	$VBoxContainer2/HostB.visible = false
 	$VBoxContainer2/yIPLabel.text = "Hosting... My ID: " + \
 		str(multiplayer.get_unique_id())
 	
@@ -136,8 +138,11 @@ func _on_join_b_pressed():
 		
 	var peer = ENetMultiplayerPeer.new()
 	var result = peer.create_client(ip, 7777)
-	
+	$VBoxContainer2/JoinB.visible = false
+	$VBoxContainer2/HostB.visible = false
+	$VBoxContainer/StartB.visible = false
 	if result != OK:
+		
 		return
 	
 	Global.is_multiplayer = true

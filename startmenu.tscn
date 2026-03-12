@@ -103,7 +103,7 @@ text = "Host"
 
 [node name="LineEdit" type="LineEdit" parent="VBoxContainer2" unique_id=2146352458]
 layout_mode = 2
-text = "XXX.XXX.XXX.XXX"
+placeholder_text = "Enter Host IP here"
 alignment = 1
 
 [node name="JoinB" type="Button" parent="VBoxContainer2" unique_id=2045183206]
