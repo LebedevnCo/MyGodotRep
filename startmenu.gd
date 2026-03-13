@@ -2,7 +2,7 @@ extends Control
 #load screen
 var splash: TextureRect
 
-
+var local_ip: String = ""
 
 # UI elements
 var shape_label: RichTextLabel
@@ -112,6 +112,7 @@ func show_local_ip():
 	
 	for addr in addresses:
 		if addr.begins_with("192.168.") or addr.begins_with("10."):
+			local_ip = addr
 			$VBoxContainer2/yIPLabel.text = "Your IP: " + addr
 			return
 
@@ -121,13 +122,13 @@ func _on_host_b_pressed():
 	
 	if result != OK:
 		return
-		
+	
 	multiplayer.multiplayer_peer = peer
 	Global.is_multiplayer = true
 	$VBoxContainer2/JoinB.visible = false
 	$VBoxContainer2/HostB.visible = false
-	$VBoxContainer2/yIPLabel.text = "Hosting... My ID: " + \
-		str(multiplayer.get_unique_id())
+	$VBoxContainer2/LineEdit.visible = false
+	$VBoxContainer2/yIPLabel.text = "Hosting (MyID: " + str(multiplayer.get_unique_id()) + ") @" + local_ip
 	
 
 func _on_join_b_pressed():
@@ -141,6 +142,10 @@ func _on_join_b_pressed():
 	$VBoxContainer2/JoinB.visible = false
 	$VBoxContainer2/HostB.visible = false
 	$VBoxContainer/StartB.visible = false
+	$VBoxContainer/ShapeLabel.visible = false
+	$VBoxContainer/ShapeSlider.visible = false
+	$VBoxContainer/DiffLabel.visible = false
+	$VBoxContainer/DiffSlider.visible = false
 	if result != OK:
 		
 		return

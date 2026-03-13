@@ -15,6 +15,7 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 [application]
 
 config/name="Alex2d-v0-5p"
+config/version="v0.85"
 run/main_scene="uid://diybkbfhf3d77"
 config/features=PackedStringArray("4.6", "Mobile")
 config/icon="uid://cjcjduurror0f"

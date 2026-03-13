@@ -1,9 +1,9 @@
 extends Node2D
 var game_over := false
 var _start_time_ms: int = 0
-var ready_peers: Dictionary = {}
-var players_spawned := false
 var game_state_enabled := false
+var ready_peers: Dictionary = {}
+var initial_spawn_done := false
 @onready var local_camera: Camera2D = $LocalCamera
 @onready var canvas: CanvasLayer = $CanvasLayer
 
@@ -41,6 +41,7 @@ func _ready():
 	
 	local_camera.make_current()
 	
+	
 	if Global.is_multiplayer and multiplayer.is_server():
 		if not multiplayer.peer_connected.is_connected(_on_peer_connected):
 			multiplayer.peer_connected.connect(_on_peer_connected)
@@ -53,13 +54,20 @@ func _ready():
 	_connect_existing_players()
 	_mark_local_ready()
 	
+	if Global.is_multiplayer and multiplayer.is_server():
+		_start_initial_spawn_checks()
+	
 	if not Global.is_multiplayer:
 		game_state_enabled = true
 
 func _on_peer_connected(id):
 	print("[Battlefield] Peer connected:", id)
-	# Do not spawn immediately here.
-	# The newly connected peer must first load the battlefield and send scene_ready().
+
+	# If someone joins while scene is already running,
+	# server will try to spawn them on the timed checks,
+	# and also immediately if they later send scene_ready().
+	if multiplayer.is_server():
+		_spawn_missing_player(id)
 	
 func _process(_delta):
 	
@@ -269,55 +277,78 @@ func scene_ready(peer_id: int) -> void:
 	ready_peers[peer_id] = true
 	print("[Battlefield] scene_ready from peer:", peer_id, " ready_count=", ready_peers.size())
 
-	_try_start_spawn_flow()
+	# If this peer is ready but has no player yet, spawn it now
+	_spawn_missing_player(peer_id)
 
 func _mark_local_ready() -> void:
-	if Global.is_multiplayer:
-		var my_id := multiplayer.get_unique_id()
+	if not Global.is_multiplayer:
+		game_state_enabled = true
+		return
 
-		# Host can mark itself directly
-		if multiplayer.is_server():
-			ready_peers[my_id] = true
-			print("[Battlefield] host scene ready:", my_id)
-			_try_start_spawn_flow()
-		else:
-			# Client tells server it finished loading this battlefield
-			scene_ready.rpc_id(1, my_id)
+	var my_id := multiplayer.get_unique_id()
 
-func _all_peers_ready() -> bool:
+	if multiplayer.is_server():
+		ready_peers[my_id] = true
+		print("[Battlefield] host scene ready:", my_id)
+	else:
+		_send_scene_ready_delayed(my_id)
+
+
+func _send_scene_ready_delayed(peer_id: int) -> void:
+	await get_tree().process_frame
+	await get_tree().create_timer(0.3).timeout
+
+	print("[Battlefield] sending scene_ready from client:", peer_id)
+	scene_ready.rpc_id(1, peer_id)
+	
+func _start_initial_spawn_checks() -> void:
 	if not multiplayer.is_server():
-		return false
-
-	# server + all connected clients
-	var expected_count := multiplayer.get_peers().size() + 1
-	return ready_peers.size() >= expected_count
-
-func _try_start_spawn_flow() -> void:
-	if not multiplayer.is_server():
 		return
-	if players_spawned:
-		return
-	if not _all_peers_ready():
+	if initial_spawn_done:
 		return
 
-	players_spawned = true
-	print("[Battlefield] all peers ready. Spawning players in 1 sec...")
+	initial_spawn_done = true
+	_initial_spawn_flow()
 
-	_start_player_spawn_flow()
-
-func _start_player_spawn_flow() -> void:
+func _initial_spawn_flow() -> void:
 	await get_tree().create_timer(1.0).timeout
 
-	# Spawn host
+	# First spawn attempt: host + all currently connected peers
 	var host_id := multiplayer.get_unique_id()
-	$PlayerSpawner.spawn_player.rpc(host_id)
+	_spawn_missing_player(host_id)
 
-	# Spawn already connected peers
 	for id in multiplayer.get_peers():
-		$PlayerSpawner.spawn_player.rpc(id)
+		_spawn_missing_player(id)
 
-	print("[Battlefield] players spawned for all ready peers")
-	await get_tree().create_timer(1.0).timeout
+	print("[Battlefield] initial player spawn attempt done")
+
+	await get_tree().create_timer(2.0).timeout
+	_check_missing_players_once("2s")
+
+	await get_tree().create_timer(3.0).timeout
+	_check_missing_players_once("5s")
+
 	game_state_enabled = true
 	print("[Battlefield] game state checks enabled")
-	
+
+func _spawn_missing_player(peer_id: int) -> void:
+	if not multiplayer.is_server():
+		return
+
+	var node_name := "MP_%d" % peer_id
+	var existing := get_tree().current_scene.get_node_or_null(node_name)
+	if existing == null:
+		print("[Battlefield] spawning missing player:", peer_id)
+		$PlayerSpawner.spawn_player.rpc(peer_id)
+
+func _check_missing_players_once(tag: String) -> void:
+	if not multiplayer.is_server():
+		return
+
+	print("[Battlefield] missing-player check:", tag)
+
+	var host_id := multiplayer.get_unique_id()
+	_spawn_missing_player(host_id)
+
+	for id in multiplayer.get_peers():
+		_spawn_missing_player(id)

@@ -97,10 +97,6 @@ text = "Your IP: "
 horizontal_alignment = 1
 vertical_alignment = 2
 
-[node name="HostB" type="Button" parent="VBoxContainer2" unique_id=463601140]
-layout_mode = 2
-text = "Host"
-
 [node name="LineEdit" type="LineEdit" parent="VBoxContainer2" unique_id=2146352458]
 layout_mode = 2
 placeholder_text = "Enter Host IP here"
@@ -109,6 +105,10 @@ alignment = 1
 [node name="JoinB" type="Button" parent="VBoxContainer2" unique_id=2045183206]
 layout_mode = 2
 text = "Join"
+
+[node name="HostB" type="Button" parent="VBoxContainer2" unique_id=463601140]
+layout_mode = 2
+text = "Host"
 
 [node name="TextureRect" type="TextureRect" parent="." unique_id=1763042424]
 visible = false
@@ -126,5 +126,5 @@ stretch_mode = 5
 [connection signal="drag_ended" from="VBoxContainer/ShapeSlider" to="." method="_on_shape_slider_drag_ended"]
 [connection signal="drag_ended" from="VBoxContainer/DiffSlider" to="." method="_on_diff_slider_drag_ended"]
 [connection signal="pressed" from="VBoxContainer/ExitB" to="." method="_on_exit_b_pressed"]
-[connection signal="pressed" from="VBoxContainer2/HostB" to="." method="_on_host_b_pressed"]
 [connection signal="pressed" from="VBoxContainer2/JoinB" to="." method="_on_join_b_pressed"]
+[connection signal="pressed" from="VBoxContainer2/HostB" to="." method="_on_host_b_pressed"]
