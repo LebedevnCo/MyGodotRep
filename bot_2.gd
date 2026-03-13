@@ -19,6 +19,9 @@ func sync_state(pos: Vector2, rot: float, scale_x: float, speed_val: float) -> v
 	# optional: keep speed in sync too
 	speed = speed_val
 	
+	if sprite.animation != "bot2" or not sprite.is_playing():
+		sprite.play("bot2")
+	
 func _is_authority() -> bool:
 	return (not Global.is_multiplayer) or multiplayer.is_server()
 
@@ -58,6 +61,7 @@ func _ready() -> void:
 	if Global.is_multiplayer and not multiplayer.is_server():
 		set_physics_process(false)
 		set_process(false)
+		sprite.play("bot2")
 		return
 	
 	print("[Bot] peer=", multiplayer.get_unique_id(),
@@ -79,6 +83,7 @@ func _ready() -> void:
 
 	direction = Vector2.RIGHT.rotated(randf() * TAU)
 	_init_size()
+	sprite.play("bot2")
 
 	print("Bot spawned | size:", int(round(sprite.scale.x * 100)), "| speed:", speed)
 
@@ -130,10 +135,8 @@ func _physics_process(delta: float) -> void:
 		velocity = Vector2.ZERO
 
 	if velocity.length() > 0:
-		sprite.play(animation_name)
 		rotation = velocity.angle()
-	else:
-		sprite.stop()
+	
 
 	move_and_slide()
 		# Replicate state to everyone (after movement)

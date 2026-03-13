@@ -78,17 +78,16 @@ anchor_left = 0.5
 anchor_right = 0.5
 anchor_bottom = 1.0
 offset_left = 40.0
-offset_top = -360.0
 offset_right = 206.0
-offset_bottom = -360.0
+offset_bottom = -324.0
 grow_horizontal = 2
 grow_vertical = 2
 scale = Vector2(2, 2)
 alignment = 1
 
-[node name="MLabel" type="Label" parent="VBoxContainer2" unique_id=1504281786]
+[node name="Multi" type="Button" parent="VBoxContainer2" unique_id=1480489650]
 layout_mode = 2
-text = "For 2 players or more
+text = "Multiplayer
 "
 
 [node name="yIPLabel" type="Label" parent="VBoxContainer2" unique_id=147806306]
@@ -110,6 +109,26 @@ text = "Join"
 layout_mode = 2
 text = "Host"
 
+[node name="Just place" type="Label" parent="VBoxContainer2" unique_id=488802443]
+layout_mode = 2
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="Just place2" type="Label" parent="VBoxContainer2" unique_id=1715829125]
+layout_mode = 2
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="Just place3" type="Label" parent="VBoxContainer2" unique_id=78933780]
+layout_mode = 2
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="Just place4" type="Label" parent="VBoxContainer2" unique_id=1516742918]
+layout_mode = 2
+horizontal_alignment = 1
+vertical_alignment = 2
+
 [node name="TextureRect" type="TextureRect" parent="." unique_id=1763042424]
 visible = false
 layout_mode = 1
@@ -126,5 +145,6 @@ stretch_mode = 5
 [connection signal="drag_ended" from="VBoxContainer/ShapeSlider" to="." method="_on_shape_slider_drag_ended"]
 [connection signal="drag_ended" from="VBoxContainer/DiffSlider" to="." method="_on_diff_slider_drag_ended"]
 [connection signal="pressed" from="VBoxContainer/ExitB" to="." method="_on_exit_b_pressed"]
+[connection signal="pressed" from="VBoxContainer2/Multi" to="." method="_on_multi_pressed"]
 [connection signal="pressed" from="VBoxContainer2/JoinB" to="." method="_on_join_b_pressed"]
 [connection signal="pressed" from="VBoxContainer2/HostB" to="." method="_on_host_b_pressed"]

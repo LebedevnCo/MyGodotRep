@@ -83,6 +83,11 @@ func set_player_colors(map: Dictionary) -> void:
 func register_bot_kill():
 	bots_killed += 1
 	_update_score()
+	
+	if is_multiplayer and multiplayer.is_server():
+		sync_shared_score.rpc(bots_killed, score, difficulty)
+
+	emit_signal("score_updated")
 
 func _update_score():
 	score = difficulty * bots_killed
@@ -95,6 +100,10 @@ func _update_score():
 func next_level():
 	difficulty += 1
 	_update_score()
+	if is_multiplayer and multiplayer.is_server():
+		sync_shared_score.rpc(bots_killed, score, difficulty)
+
+	emit_signal("score_updated")
 
 func reset_session():
 	bots_killed = 0
@@ -103,3 +112,11 @@ func reset_session():
 	player_color_index.clear()
 	player_join_order.clear()
 	emit_signal("player_colors_updated")
+	emit_signal("score_updated")
+	
+@rpc("authority", "call_local")
+func sync_shared_score(new_bots_killed: int, new_score: int, new_difficulty: int) -> void:
+	bots_killed = new_bots_killed
+	score = new_score
+	difficulty = new_difficulty
+	emit_signal("score_updated")

@@ -4,6 +4,7 @@ signal player_died(peer_id: int)
 
 var SPEED: float = 155.0
 var last_input := Vector2.ZERO
+var is_dead: bool = false
 @export var owner_peer_id: int = 1
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var head_circle: Polygon2D = $HeadCircle
@@ -34,6 +35,9 @@ func sync_state(pos: Vector2, rot: float, scale_x: float, speed_val: float) -> v
 	rotation = rot
 	animated_sprite.scale = Vector2.ONE * scale_x
 	SPEED = speed_val
+	
+	if animated_sprite.animation != "walk" or not animated_sprite.is_playing():
+		animated_sprite.play("walk")
 
 
 func _ready() -> void:
@@ -50,6 +54,8 @@ func _ready() -> void:
 	if not Global.is_connected("player_colors_updated", cb):
 		Global.connect("player_colors_updated", cb)
 	call_deferred("apply_player_color")
+	
+	animated_sprite.play("walk")
 
 func _physics_process(_delta: float) -> void:
 	# Only server simulates movement
@@ -67,11 +73,10 @@ func _physics_process(_delta: float) -> void:
 
 	if input_vector.length() > 0:
 		velocity = input_vector.normalized() * SPEED
-		animated_sprite.play("walk")
 		rotation = velocity.angle()
 	else:
 		velocity = Vector2.ZERO
-		animated_sprite.stop()
+		
 
 	move_and_slide()
 
@@ -100,6 +105,9 @@ func _process(_delta: float) -> void:
 # Food collision (server-authoritative)
 # -------------------------------------------------
 func _on_yamnyam_area_2d_body_entered(body: Node2D) -> void:
+	if is_dead:
+		return
+		
 	if Global.is_multiplayer and not multiplayer.is_server():
 		return
 
@@ -115,14 +123,21 @@ func _on_yamnyam_area_2d_body_entered(body: Node2D) -> void:
 
 
 func die() -> void:
+	if is_dead:
+		return
+
+	is_dead = true
 	remove_from_group("Player")
-	set_process(false)
-	set_physics_process(false)
-	set_process_input(false)
-	animated_sprite.visible = false
+
+	# скрыть игрока у всех
+	if Global.is_multiplayer and multiplayer.is_server():
+		set_dead_visual.rpc()
+	else:
+		set_dead_visual()
+
 	emit_signal("player_died", owner_peer_id)
-	
-	# ✅ Server tells everyone who died (clients will zoom only if it's them)
+
+	# zoom-out только для умершего локального игрока
 	if Global.is_multiplayer and multiplayer.is_server():
 		var battlefield := get_tree().current_scene
 		if battlefield and battlefield.has_method("notify_player_died"):
@@ -132,3 +147,16 @@ func apply_player_color() -> void:
 	if head_circle == null:
 		return
 	head_circle.color = Color(Global.get_player_color(owner_peer_id),0.3)
+	
+@rpc("authority", "call_local")
+func set_dead_visual() -> void:
+	is_dead = true
+
+	# скрываем визуал
+	animated_sprite.visible = false
+	head_circle.visible = true
+
+	# отключаем зоны/коллизии, чтобы "призрак" не участвовал в игре
+	$"Yamnyam-Area2D".monitoring = false
+	$"Yamnyam-Area2D".monitorable = false
+	$PlayerCollisionShape2D.disabled = true

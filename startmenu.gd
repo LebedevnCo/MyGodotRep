@@ -29,6 +29,11 @@ var scene_map = {
 
 
 func _ready():
+	$VBoxContainer2/yIPLabel.visible = false
+	$VBoxContainer2/JoinB.visible = false
+	$VBoxContainer2/HostB.visible = false
+	$VBoxContainer2/LineEdit.visible = false
+	
 	Global.is_multiplayer = false
 	#laodIP for multiplayer
 	show_local_ip()
@@ -158,3 +163,11 @@ func _on_join_b_pressed():
 func _on_connected():
 	$VBoxContainer2/yIPLabel.text = "Connected! My ID: " + \
 		str(multiplayer.get_unique_id())
+
+
+func _on_multi_pressed() -> void:
+	$VBoxContainer2/yIPLabel.visible = true
+	$VBoxContainer2/JoinB.visible = true
+	$VBoxContainer2/HostB.visible = true
+	$VBoxContainer2/LineEdit.visible = true
+	$VBoxContainer2/Multi.visible = false
